@@ -32,38 +32,49 @@ def parseFile(name):
         if skippingLines:
             counts["multiLine"] +=1
             endMultiLine = rawLine.find(multiLineCommentEnd)
+            #Note: If a new multi line comment open on the same line one closes on, it will not find it
             if endMultiLine >=0:
                 skippingLines = False
             continue
 
 
+        #Note: If multi line starts on a line that contains code before, it will be marked as a comment
         locationIndex = rawLine.find(multiLineCommentStart)
         if(locationIndex >= 0):
             counts["multiLine"] +=1
-            skippingLines = True
+            endOnSameLine = rawLine.find(multiLineCommentEnd, locationIndex)
+            if(endOnSameLine < 0):
+                skippingLines = True
             continue
         locationIndex = rawLine.find(singleLineComment)
+
+
         if(locationIndex >=0):
-            counts["singleLine"] +=1
-            continue    
+            line = rawLine[:locationIndex]
+            possSingleLine = True
+        else:
+            line = rawLine 
+            possSingleLine = False;   
         
-        if(rawLine.isspace()):
-            counts["whiteSpace"] +=1
+        if(line.isspace()):
+            if possSingleLine:
+                counts["singleLine"] +=1
+            else:
+                counts["whiteSpace"] +=1
             continue
 
         counts["code"] +=1
-      #  output.write(rawLine)        
+   #     output.write(line)        
 
 
 
-   # print("Code:", linesOfCode, "Comments:", linesOfMultiLineComments+linesOfSingleLineComments, "Whitespace", linesOfWhiteSpace, "Directives", linesOfPreProcessorDirectives )
-    #print("Total:", linesOfCode+linesOfMultiLineComments+linesOfSingleLineComments+linesOfWhiteSpace+linesOfPreProcessorDirectives)
    
     sum =0
     for entry in counts:
         sum += counts[entry]
    # counts["total"] = sum 
-    #print(counts)
+    print(counts)
+    print("Total", sum)
     file.close()
 
 
@@ -72,7 +83,7 @@ def parseFile(name):
         "total" : sum,
         "counts":counts
     }
-   # output.close()
+  #  output.close()
 
 
 def checkDirectory(directory):
