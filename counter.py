@@ -13,19 +13,24 @@ def parseFile(name):
 
     skippingLines = False
 
-    linesOfPreProcessorDirectives = 0
-    linesOfMultiLineComments = 0
-    linesOfSingleLineComments = 0
-    linesOfWhiteSpace = 0
-    linesOfCode = 0
+ 
+
+    counts = {
+    "preProcessor" : 0,
+    "multiLine" : 0,
+    "singleLine" : 0,
+    "whiteSpace" : 0,
+    "code" : 0,
+    }
+
     for rawLine in file:
         if rawLine.find(preProcessorDirectives) >=0 :
-            linesOfPreProcessorDirectives += 1
+            counts["preProcessor"] += 1
             continue
 
 
         if skippingLines:
-            linesOfMultiLineComments +=1
+            counts["multiLine"] +=1
             endMultiLine = rawLine.find(multiLineCommentEnd)
             if endMultiLine >=0:
                 skippingLines = False
@@ -34,25 +39,31 @@ def parseFile(name):
 
         locationIndex = rawLine.find(multiLineCommentStart)
         if(locationIndex >= 0):
-            linesOfMultiLineComments +=1
+            counts["multiLine"] +=1
             skippingLines = True
             continue
         locationIndex = rawLine.find(singleLineComment)
         if(locationIndex >=0):
-            linesOfSingleLineComments +=1
+            counts["singleLine"] +=1
             continue    
         
         if(rawLine.isspace()):
-            linesOfWhiteSpace +=1
+            counts["whiteSpace"] +=1
             continue
 
-        linesOfCode +=1
+        counts["code"] +=1
         output.write(rawLine)        
 
 
 
-    print("Code:", linesOfCode, "Comments:", linesOfMultiLineComments+linesOfSingleLineComments, "Whitespace", linesOfWhiteSpace, "Directives", linesOfPreProcessorDirectives )
-    print("Total:", linesOfCode+linesOfMultiLineComments+linesOfSingleLineComments+linesOfWhiteSpace+linesOfPreProcessorDirectives)
+   # print("Code:", linesOfCode, "Comments:", linesOfMultiLineComments+linesOfSingleLineComments, "Whitespace", linesOfWhiteSpace, "Directives", linesOfPreProcessorDirectives )
+    #print("Total:", linesOfCode+linesOfMultiLineComments+linesOfSingleLineComments+linesOfWhiteSpace+linesOfPreProcessorDirectives)
+   
+    sum =0
+    for entry in counts:
+        sum += counts[entry]
+    counts["total"] = sum 
+    print(counts)
     file.close()
     output.close()
 
