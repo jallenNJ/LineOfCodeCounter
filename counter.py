@@ -110,20 +110,34 @@ def checkDirectory(directory):
         for field in result["counts"]:
             counts[field] += result["counts"][field]
         counts["total"] += result["total"]
-
-        asArray = list(result["counts"].values())
+        
+ 
+        asArray = [filename]
+        for element in result["counts"].values():
+           asArray.append(element)
         asArray.append(result["total"])
+        
+        
         allFiles.append(asArray)    
 
 
-
-    #Todo, add name
-    allFiles.append(counts.values())
-    printTable(counts.keys(), allFiles) 
+    directoryTable = [directory] + list(counts.values())
+    tableData = [directoryTable]
+    for data in allFiles:
+        tableData.append(data)
+    printTable(tableData) 
        
 
-def printTable(headers, data):
-    print(tabulate(data, headers, "fancy_grid"))
+def printTable(data):
+
+    headers = ["Name", "PreProc", "MultiLine", "SingleLine", "whiteSpace", "Code", "Total"]
+    if not args.quiet:
+        print(tabulate(data, headers, "fancy_grid"))
+
+    if(args.output):
+        outputFile = open(args.output, "w")
+        outputFile.write(tabulate(data, headers, "plain"))
+        outputFile.close()
 
 #Main
 
@@ -137,9 +151,6 @@ group.add_argument("-q", "--quiet", help="Surpress all console outputs", action=
 
 args = parser.parse_args()
 
-
-if args.output:
-    print("Output file not implemented")
 
 
 if(not os.path.exists(args.input)):
