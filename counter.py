@@ -8,7 +8,7 @@ preProcessorDirectives = "#"
 
 def parseFile(name):
     file = open(name, "r")
-    output = open("output.txt", "w")
+    #output = open("output.txt", "w")
 
 
     skippingLines = False
@@ -52,7 +52,7 @@ def parseFile(name):
             continue
 
         counts["code"] +=1
-        output.write(rawLine)        
+      #  output.write(rawLine)        
 
 
 
@@ -62,13 +62,39 @@ def parseFile(name):
     sum =0
     for entry in counts:
         sum += counts[entry]
-    counts["total"] = sum 
-    print(counts)
+   # counts["total"] = sum 
+    #print(counts)
     file.close()
-    output.close()
 
 
+    return {
+        "name" : name,
+        "total" : sum,
+        "counts":counts
+    }
+   # output.close()
 
+
+def checkDirectory(directory):
+
+
+    counts = {
+        "preProcessor" : 0,
+        "multiLine" : 0,
+        "singleLine" : 0,
+        "whiteSpace" : 0,
+        "code" : 0,
+        "total" :0
+    }
+    for file in os.listdir(directory):
+        filename = os.fsdecode(file)
+        result = parseFile(directory+"\\"+filename)
+        for field in result["counts"]:
+            counts[field] += result["counts"][field]
+        counts["total"] += result["total"]    
+
+    print ("For directory" + directory)
+    print(counts)        
 
 
 #Main
@@ -82,6 +108,6 @@ if(not os.path.exists(sys.argv[1])):
     exit(-2)
 
 if os.path.isdir(sys.argv[1]):
-    print("is directory")
+    checkDirectory(sys.argv[1])
 elif os.path.isfile(sys.argv[1]):
     parseFile(sys.argv[1])
