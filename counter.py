@@ -1,13 +1,17 @@
 import sys
 import os
 import argparse
+from tabulate import tabulate
 
 singleLineComment = "//"
 multiLineCommentStart = "/*"
 multiLineCommentEnd = "*/"
 preProcessorDirectives = "#"
 
+
 def parseFile(name):
+
+
     file = open(name, "r")
     #output = open("output.txt", "w")
 
@@ -74,8 +78,8 @@ def parseFile(name):
     for entry in counts:
         sum += counts[entry]
    # counts["total"] = sum 
-    print(counts)
-    print("Total", sum)
+  #  print(counts)
+   # print("Total", sum)
     file.close()
 
 
@@ -89,7 +93,6 @@ def parseFile(name):
 
 def checkDirectory(directory):
 
-
     counts = {
         "preProcessor" : 0,
         "multiLine" : 0,
@@ -98,18 +101,29 @@ def checkDirectory(directory):
         "code" : 0,
         "total" :0
     }
+
+
+    allFiles = []
     for file in os.listdir(directory):
         filename = os.fsdecode(file)
         result = parseFile(directory+"\\"+filename)
         for field in result["counts"]:
             counts[field] += result["counts"][field]
-        counts["total"] += result["total"]    
+        counts["total"] += result["total"]
 
-    print ("For directory" + directory)
-    print(counts)        
+        asArray = list(result["counts"].values())
+        asArray.append(result["total"])
+        allFiles.append(asArray)    
 
 
 
+    #Todo, add name
+    allFiles.append(counts.values())
+    printTable(counts.keys(), allFiles) 
+       
+
+def printTable(headers, data):
+    print(tabulate(data, headers, "fancy_grid"))
 
 #Main
 
