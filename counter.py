@@ -1,5 +1,6 @@
 import sys
 import os
+import argparse
 
 singleLineComment = "//"
 multiLineCommentStart = "/*"
@@ -13,7 +14,6 @@ def parseFile(name):
 
     skippingLines = False
 
- 
 
     counts = {
     "preProcessor" : 0,
@@ -49,6 +49,7 @@ def parseFile(name):
         locationIndex = rawLine.find(singleLineComment)
 
 
+        #TODO: Add a counter for inline comments, must be stored different as it occupies same line of code
         if(locationIndex >=0):
             line = rawLine[:locationIndex]
             possSingleLine = True
@@ -108,17 +109,21 @@ def checkDirectory(directory):
     print(counts)        
 
 
+
+
 #Main
-if len(sys.argv) < 2:
-    print ("Please include the name of the directory to search.")
-    exit(-1)
+
+parser = argparse.ArgumentParser(description="Count lines of code in a directory or file")
+parser.add_argument('-i', '--input', metavar="", required=True, help="The file or directory to check the lines of code")
+
+args = parser.parse_args()
 
 
-if(not os.path.exists(sys.argv[1])):
+if(not os.path.exists(args.input)):
     print("File/Directory does not exist")
     exit(-2)
 
-if os.path.isdir(sys.argv[1]):
-    checkDirectory(sys.argv[1])
-elif os.path.isfile(sys.argv[1]):
-    parseFile(sys.argv[1])
+if os.path.isdir(args.input):
+    checkDirectory(args.input)
+elif os.path.isfile(args.input):
+    parseFile(args.input)
