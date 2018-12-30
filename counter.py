@@ -114,14 +114,23 @@ def checkDirectory(directory):
 #Main
 
 parser = argparse.ArgumentParser(description="Count lines of code in a directory or file")
-parser.add_argument('-i', '--input', metavar="", required=True, help="The file or directory to check the lines of code")
+parser.add_argument( 'input', metavar="<file or Directory>", help="The file or directory to check the lines of code")
+parser.add_argument("-o", "--output", metavar="<filename>", help="Optionial file name to output data to")
+
+group = parser.add_mutually_exclusive_group()
+group.add_argument("-v", "--verbose", help="If each file should be outputted", action="store_true")
+group.add_argument("-q", "--quiet", help="Surpress all console outputs", action="store_true")
 
 args = parser.parse_args()
 
 
+if args.output:
+    print("Output file not implemented")
+
+
 if(not os.path.exists(args.input)):
     print("File/Directory does not exist")
-    exit(-2)
+    exit(-1)
 
 if os.path.isdir(args.input):
     checkDirectory(args.input)
